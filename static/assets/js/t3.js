@@ -365,6 +365,10 @@ function goForward() {
 document.addEventListener("DOMContentLoaded", () => {
   const tb = document.getElementById("tabs-button");
   const nb = document.getElementById("right-side-nav");
+  const hideTabsButton = document.getElementById("hideTabsBtn");
+  hideTabsButton.addEventListener("click", () => {
+    nb.classList.toggle("hidden");
+  });
   tb.addEventListener("click", () => {
     const activeIframe = document.querySelector("#frame-container iframe.active");
     if (nb.style.display === "none") {

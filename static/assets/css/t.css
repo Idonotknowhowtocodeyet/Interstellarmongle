@@ -236,3 +236,30 @@ iframe {
    left: 0;
    top: 10%;
 }
+
+#hideTabsBtn {
+   padding: 0.45rem 0.8rem;
+   cursor: pointer;
+   background-color: #031006;
+   color: #39ff14;
+   border: 1px solid #39ff14;
+   border-radius: 5px;
+   font: inherit;
+   font-weight: 600;
+   transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+}
+
+#hideTabsBtn:hover {
+   background-color: #39ff14;
+   color: #000;
+}
+
+#right-side-nav.hidden {
+   visibility: hidden;
+   height: 0;
+   padding: 0;
+   overflow: hidden;
+   pointer-events: none;
+}
