@@ -12,26 +12,12 @@ try {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const blockedHostnames = ["gointerstellar.app"];
-
-  if (!blockedHostnames.includes(window.location.hostname)) {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.textContent = `(()=>{const k="p",d=15e4,s=()=>{let t=localStorage.getItem(k);return !t||Date.now()-t>d},m=()=>localStorage.setItem(k,Date.now());function h(){if(!s())return;window.open("https://undercoverhiking.com/yabbhdzdww?key=6429d070f11caf7c64bd90bff05deb1f","_blank");m();document.removeEventListener("click",h)}s()&&document.addEventListener("click",h,{once:1})})();`;
-    document.body.appendChild(script);
-  }
-
   const nav = document.querySelector(".f-nav");
 
   if (nav) {
-    const themeId = localStorage.getItem("theme");
-    let LogoUrl = "/assets/media/favicon/main.png";
-    if (themeId === "Inverted") {
-      LogoUrl = "/assets/media/favicon/main-inverted.png";
-    }
     const html = `
       <div id="icon-container">
-        <a class="icon" href="/./"><img alt="nav" id="INImg" src="${LogoUrl}"/></a>
+        <a class="icon" href="/./" aria-label="MONGLE_OS home">M</a>
       </div>
       <div class="f-nav-right">
         ${qp ? "" : '<a class="navbar-link" href="/./d"><i class="fa-solid fa-laptop navbar-icon"></i><an>&#84;&#97;</an><an>&#98;&#115;</an></a>'}
@@ -309,4 +295,89 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedBackgroundImage) {
     document.body.style.backgroundImage = `url('${savedBackgroundImage}')`;
   }
+
+  let consoleStep = 0;
+  let consoleDigits = "";
+  document.addEventListener("keydown", event => {
+    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "s") {
+      consoleStep = 1;
+      consoleDigits = "";
+      event.preventDefault();
+      return;
+    }
+    if (consoleStep === 1 && /^[0-9]$/.test(event.key)) {
+      consoleDigits += event.key;
+      if (!"1539".startsWith(consoleDigits)) {
+        consoleStep = 0;
+        consoleDigits = "";
+      } else if (consoleDigits === "1539") {
+        consoleStep = 2;
+      }
+      return;
+    }
+    if (consoleStep === 2 && event.shiftKey && event.key.toLowerCase() === "w") {
+      consoleStep = 0;
+      openAdminConsole();
+      event.preventDefault();
+    }
+  });
 });
+
+function openAdminConsole() {
+  if (document.getElementById("admin-console")) return;
+
+  const modal = document.createElement("div");
+  modal.id = "admin-console";
+  modal.innerHTML = `
+    <section class="admin-console-panel" role="dialog" aria-modal="true" aria-labelledby="admin-console-title">
+      <button class="admin-console-close" type="button" aria-label="Close">×</button>
+      <p class="admin-console-label">MONGLE_OS / command console</p>
+      <h2 id="admin-console-title">Access controls</h2>
+      <p class="admin-console-help">Commands: <strong>users</strong>, <strong>add USER PASS</strong>, <strong>remove USER</strong>, <strong>change OLD NEW PASS</strong></p>
+      <input id="admin-console-command" autocomplete="off" placeholder="Type a command" />
+      <button id="admin-console-run" type="button">Run</button>
+      <pre id="admin-console-output" aria-live="polite">Ready.</pre>
+    </section>`;
+  document.body.appendChild(modal);
+
+  const commandInput = document.getElementById("admin-console-command");
+  const output = document.getElementById("admin-console-output");
+  const close = () => modal.remove();
+  modal.querySelector(".admin-console-close").addEventListener("click", close);
+  modal.addEventListener("click", event => {
+    if (event.target === modal) close();
+  });
+
+  async function runCommand() {
+    const parts = commandInput.value.trim().split(/\s+/);
+    const action = parts.shift();
+    let body;
+    if (action === "users") {
+      const response = await fetch("/admin/users");
+      const data = await response.json();
+      output.textContent = response.ok ? `Users:\n${data.users.join("\n")}` : data.error;
+      return;
+    }
+    if (action === "add" && parts.length === 2) body = { action, username: parts[0], password: parts[1] };
+    if (action === "remove" && parts.length === 1) body = { action, username: parts[0] };
+    if (action === "change" && parts.length === 3) body = { action, username: parts[0], newUsername: parts[1], newPassword: parts[2] };
+    if (!body) {
+      output.textContent = "Invalid command. Use users, add USER PASS, remove USER, or change OLD NEW PASS.";
+      return;
+    }
+    const response = await fetch("/admin/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    output.textContent = response.ok ? `Done. Active users: ${data.users.join(", ")}` : data.error;
+  }
+
+  document.getElementById("admin-console-run").addEventListener("click", runCommand);
+  commandInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") runCommand();
+    if (event.key === "Escape") close();
+  });
+  commandInput.focus();
+}

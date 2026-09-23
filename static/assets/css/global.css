@@ -76,3 +76,73 @@ body {
    position: absolute;
    z-index: 99;
 }
+
+#admin-console {
+   position: fixed;
+   inset: 0;
+   z-index: 1000;
+   display: grid;
+   place-items: center;
+   padding: 20px;
+   background: rgba(0, 0, 0, 0.84);
+}
+
+.admin-console-panel {
+   position: relative;
+   width: min(560px, 100%);
+   padding: 26px;
+   border: 1px solid var(--text-primary);
+   background: #031006;
+   box-shadow: 0 0 35px rgba(57, 255, 20, 0.22);
+}
+
+.admin-console-panel h2 {
+   margin: 0 0 8px;
+   color: var(--text-primary);
+}
+
+.admin-console-label,
+.admin-console-help {
+   color: var(--text-placeholder);
+}
+
+.admin-console-close {
+   position: absolute;
+   top: 8px;
+   right: 12px;
+   border: 0;
+   background: transparent;
+   color: var(--text-primary);
+   cursor: pointer;
+   font-size: 24px;
+}
+
+#admin-console-command {
+   width: calc(100% - 90px);
+   padding: 11px;
+   border: 1px solid #0b6b1c;
+   background: #000;
+   color: var(--text-primary);
+   font: inherit;
+}
+
+#admin-console-run {
+   width: 76px;
+   margin-left: 8px;
+   padding: 11px 8px;
+   border: 1px solid var(--text-primary);
+   background: var(--text-primary);
+   color: #000;
+   cursor: pointer;
+   font-weight: 800;
+}
+
+#admin-console-output {
+   min-height: 80px;
+   margin: 18px 0 0;
+   padding: 12px;
+   overflow: auto;
+   background: #000;
+   color: var(--text-primary);
+   white-space: pre-wrap;
+}

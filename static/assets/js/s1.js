@@ -240,6 +240,8 @@ switches.addEventListener("change", event => {
 });
 // AB Cloak
 function AB() {
+  if (localStorage.getItem("abOpened") === "true") return;
+  localStorage.setItem("abOpened", "true");
   let inFrame;
 
   try {

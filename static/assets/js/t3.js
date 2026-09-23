@@ -30,14 +30,6 @@ window.addEventListener("load", () => {
     return `/a/${__uv$config.encodeUrl(url)}`;
   }
 
-  function getPxyUrlSync(url) {
-    if (useScramjetPxy() && window.__isSj?.encodeUrl) {
-      return window.__isSj.encodeUrl(url);
-    }
-
-    return `/a/${__uv$config.encodeUrl(url)}`;
-  }
-
   async function processUrl(url) {
     const pxyUrl = await getPxyUrl(url);
     sessionStorage.setItem("GoUrl", pxyUrl);
@@ -61,7 +53,7 @@ window.addEventListener("load", () => {
     return url;
   }
 
-  window.__isGetPxyUrl = getPxyUrlSync;
+  window.__isGetPxyUrl = getPxyUrl;
 });
 document.addEventListener("DOMContentLoaded", event => {
   const addTabButton = document.getElementById("add-tab");
@@ -108,10 +100,8 @@ document.addEventListener("DOMContentLoaded", event => {
       } else {
         tabTitle.textContent = title;
       }
-      newIframe.contentWindow.open = url => {
-        const pxyUrl = window.__isGetPxyUrl
-          ? window.__isGetPxyUrl(url)
-          : `/a/${__uv$config.encodeUrl(url)}`;
+      newIframe.contentWindow.open = async url => {
+        const pxyUrl = window.__isGetPxyUrl ? await window.__isGetPxyUrl(url) : `/a/${__uv$config.encodeUrl(url)}`;
         sessionStorage.setItem("URL", pxyUrl);
         createNewTab();
         return null;

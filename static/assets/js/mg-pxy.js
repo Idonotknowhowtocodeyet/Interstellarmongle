@@ -2,10 +2,7 @@
   "use strict";
 
   function migrate() {
-    let hadLegacy =
-      localStorage.getItem("pChoice") !== null ||
-      localStorage.getItem("uv") !== null ||
-      localStorage.getItem("dy") !== null;
+    let hadLegacy = localStorage.getItem("pChoice") !== null || localStorage.getItem("uv") !== null || localStorage.getItem("dy") !== null;
 
     localStorage.removeItem("pChoice");
     localStorage.removeItem("uv");
